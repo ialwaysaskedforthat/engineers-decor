@@ -9,9 +9,10 @@
  */
 package wile.engineersdecor.libmc;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -20,6 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 
@@ -31,7 +33,7 @@ public class TooltipDisplay
 
   public static void config(long delay, int max_deviation)
   {
-    default_delay = Mth.clamp(delay, 500, 5000);
+    default_delay = (long) Mth.clamp(delay, 500, 5000);
     default_max_deviation = Mth.clamp(max_deviation, 1, 5);
   }
 
@@ -84,7 +86,7 @@ public class TooltipDisplay
   public void resetTimer()
   { t = System.currentTimeMillis(); }
 
-  public <T extends AbstractContainerMenu> boolean render(PoseStack mx, final AbstractContainerScreen<T> gui, int x, int y)
+  public <T extends AbstractContainerMenu> boolean render(GuiGraphics graphics, final AbstractContainerScreen<T> gui, int x, int y)
   {
     if(had_render_exception) return false;
     if((Math.abs(x-x_last) > max_deviation) || (Math.abs(y-y_last) > max_deviation)) {
@@ -100,7 +102,7 @@ public class TooltipDisplay
               String text = tip.text.get().toString();
               if(text.isEmpty()) return false;
               try {
-                gui.renderComponentTooltip(mx, tip.text.get().toFlatList(Style.EMPTY), x, y);
+                graphics.renderTooltip(gui.getMinecraft().font, tip.text.get().toFlatList(Style.EMPTY), Optional.empty(), x, y);
               } catch(Exception ex) {
                 had_render_exception = true;
                 Auxiliaries.logError("Tooltip rendering disabled due to exception: '" + ex.getMessage() + "'");

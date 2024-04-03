@@ -29,14 +29,14 @@ import java.util.List;
 public class EdItem extends Item
 {
   public EdItem(Item.Properties properties)
-  { super(properties.tab(Registries.getCreativeModeTab())); }
+  { super(properties); }
 
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag)
   { Auxiliaries.Tooltip.addInformation(stack, world, tooltip, flag, true); }
 
-  @Override
+//  @Override
   public Collection<CreativeModeTab> getCreativeTabs()
   { return ModConfig.isOptedOut(this) ? (new ArrayList<>()) : (Collections.singletonList(Registries.getCreativeModeTab())); }
 }

@@ -9,13 +9,14 @@
 package wile.engineersdecor.libmc;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
@@ -38,17 +39,26 @@ public class Crafting
 {
   // -------------------------------------------------------------------------------------------------------------------
 
-  public static final class CraftingGrid extends CraftingContainer
+  public static final class CraftingGrid implements CraftingContainer
   {
     protected static final CraftingGrid instance3x3 = new CraftingGrid(3,3);
 
     protected CraftingGrid(int width, int height)
     { super(
-        new AbstractContainerMenu(null,0) {
-          public boolean stillValid(Player player) { return false; }
-          public ItemStack quickMoveStack(Player player, int slot) {return ItemStack.EMPTY; }
-        }
-        , width, height
+////        new AbstractContainerMenu(null,0) {
+////          public boolean stillValid(Player player) { return false; }
+////          public ItemStack quickMoveStack(Player player, int slot) {return ItemStack.EMPTY; }
+////        }
+////        , width, height
+//            new CraftingMenu(0 , null)
+//            {
+//              public boolean stillValid(Player player) {
+//                return false;
+//              }
+//              public ItemStack quickMoveStack(Player player, int slot) {
+//                return ItemStack.EMPTY;
+//              }
+//            }, Component.literal("WHAT?!")
       );
     }
 
@@ -62,7 +72,72 @@ public class Crafting
     { fill(grid); return recipe.getRemainingItems(this); }
 
     public ItemStack getCraftingResult(Level world, Container grid, CraftingRecipe recipe)
-    { fill(grid); return recipe.assemble(this); }
+    { fill(grid); return recipe.assemble(this, RegistryAccess.EMPTY); }
+
+    @Override
+    public int getWidth() {
+      return 0;
+    }
+
+    @Override
+    public int getHeight() {
+      return 0;
+    }
+
+    @Override
+    public List<ItemStack> getItems() {
+      return null;
+    }
+
+    @Override
+    public int getContainerSize() {
+      return 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return false;
+    }
+
+    @Override
+    public ItemStack getItem(int i) {
+      return null;
+    }
+
+    @Override
+    public ItemStack removeItem(int i, int i1) {
+      return null;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int i) {
+      return null;
+    }
+
+    @Override
+    public void setItem(int i, ItemStack itemStack) {
+
+    }
+
+    @Override
+    public void setChanged() {
+
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+      return false;
+    }
+
+    @Override
+    public void clearContent() {
+
+    }
+
+    @Override
+    public void fillStackedContents(StackedContents stackedContents) {
+
+    }
   }
 
   /**

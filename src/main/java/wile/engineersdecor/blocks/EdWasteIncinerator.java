@@ -25,7 +25,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -43,13 +43,7 @@ import net.minecraftforge.items.IItemHandler;
 import wile.engineersdecor.ModConfig;
 import wile.engineersdecor.ModContent;
 import wile.engineersdecor.blocks.EdFurnace.FurnaceBlock;
-import wile.engineersdecor.libmc.StandardBlocks;
-import wile.engineersdecor.libmc.StandardEntityBlocks;
-import wile.engineersdecor.libmc.Auxiliaries;
-import wile.engineersdecor.libmc.Inventories;
-import wile.engineersdecor.libmc.RfEnergy;
-import wile.engineersdecor.libmc.RsSignals;
-import wile.engineersdecor.libmc.Guis;
+import wile.engineersdecor.libmc.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -104,7 +98,7 @@ public class EdWasteIncinerator
     { return (!(world.getBlockEntity(pos) instanceof WasteIncineratorTileEntity te)) ? 0 : RsSignals.fromContainer(te.main_inventory_); }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override
@@ -396,7 +390,7 @@ public class EdWasteIncinerator
     public int field(int index) { return fields_.get(index); }
     public Player player() { return player_ ; }
     public Container inventory() { return inventory_ ; }
-    public Level world() { return player_.level; }
+    public Level world() { return player_.level(); }
 
     public WasteIncineratorContainer(int cid, Inventory player_inventory)
     { this(cid, player_inventory, new SimpleContainer(WasteIncineratorTileEntity.NUM_OF_SLOTS), ContainerLevelAccess.NULL, new SimpleContainerData(WasteIncineratorTileEntity.NUM_OF_FIELDS)); }

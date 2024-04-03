@@ -25,7 +25,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -47,9 +47,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import wile.engineersdecor.ModConfig;
 import wile.engineersdecor.ModContent;
+import wile.engineersdecor.libmc.Fluidics;
 import wile.engineersdecor.libmc.StandardBlocks;
 import wile.engineersdecor.libmc.StandardEntityBlocks;
-import wile.engineersdecor.libmc.Fluidics;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -150,7 +150,7 @@ public class EdFreezer
     }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override

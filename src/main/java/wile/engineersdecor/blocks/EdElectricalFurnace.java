@@ -8,9 +8,10 @@
  */
 package wile.engineersdecor.blocks;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -29,7 +30,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -117,7 +118,7 @@ public class EdElectricalFurnace
     }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override
@@ -609,7 +610,7 @@ public class EdElectricalFurnace
       if(recipe_result_items.isEmpty()) return false;
       final ItemStack result_stack = inventory_.getItem(SMELTING_OUTPUT_SLOT_NO);
       if(result_stack.isEmpty()) return true;
-      if(!result_stack.sameItem(recipe_result_items)) return false;
+      if(!result_stack.is(recipe_result_items.getItem())) return false;
       if(result_stack.getCount() + recipe_result_items.getCount() <= inventory_.getMaxStackSize() && result_stack.getCount() + recipe_result_items.getCount() <= result_stack.getMaxStackSize()) return true;
       return result_stack.getCount() + recipe_result_items.getCount() <= recipe_result_items.getMaxStackSize();
     }
@@ -651,7 +652,7 @@ public class EdElectricalFurnace
     }
 
     public ItemStack getSmeltingResult(final ItemStack stack)
-    { return (currentRecipe()==null) ? (ItemStack.EMPTY) : (currentRecipe().getResultItem()); }
+    { return (currentRecipe()==null) ? (ItemStack.EMPTY) : (currentRecipe().getResultItem(RegistryAccess.EMPTY)); }
 
     public float getCurrentSmeltingXp(final ItemStack stack)
     {
@@ -711,14 +712,14 @@ public class EdElectricalFurnace
       @Override
       protected void checkTakeAchievements(ItemStack stack)
       {
-        stack.onCraftedBy(player_.level, player_, removeCount);
-        if((!player_.level.isClientSide()) && (inventory_ instanceof StorageInventory) &&
+        stack.onCraftedBy(player_.level(), player_, removeCount);
+        if((!player_.level().isClientSide()) && (inventory_ instanceof StorageInventory) &&
           (((StorageInventory)inventory_).getBlockEntity()) instanceof final ElectricalFurnaceTileEntity te) {
           int xp = te.consumeSmeltingExperience(stack);
           while(xp > 0) {
             int k = ExperienceOrb.getExperienceValue(xp);
             xp -= k;
-            player_.level.addFreshEntity((new ExperienceOrb(player_.level, player_.blockPosition().getX(), player_.blockPosition().getY()+0.5, player_.blockPosition().getZ()+0.5, k)));
+            player_.level().addFreshEntity((new ExperienceOrb(player_.level(), player_.blockPosition().getX(), player_.blockPosition().getY()+0.5, player_.blockPosition().getZ()+0.5, k)));
           }
         }
         removeCount = 0;
@@ -736,7 +737,7 @@ public class EdElectricalFurnace
     public int field(int index) { return fields_.get(index); }
     public Player player() { return player_ ; }
     public Container inventory() { return inventory_ ; }
-    public Level world() { return player_.level; }
+    public Level world() { return player_.level(); }
 
     public ElectricalFurnaceContainer(int cid, Inventory player_inventory)
     { this(cid, player_inventory, new SimpleContainer(ElectricalFurnaceTileEntity.NUM_OF_SLOTS), ContainerLevelAccess.NULL, new SimpleContainerData(ElectricalFurnaceTileEntity.NUM_OF_FIELDS)); }
@@ -870,23 +871,24 @@ public class EdElectricalFurnace
     }
 
     @Override
-    protected void renderBgWidgets(PoseStack mx, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
+//      final ResourceLocation bg = new ResourceLocation("textures/gui/small_electrical_furnace_gui.png");
       final int x0=leftPos, y0=topPos, w=imageWidth, h=imageHeight;
-      blit(mx, x0, y0, 0, 0, w, h);
+      graphics.blit(this.background_image_, x0, y0, 0, 0, w, h);
       if(getMenu().field(6)!=0)  {
         final int hi = 13;
         final int k = heat_px(hi);
-        blit(mx, x0+62, y0+55+hi-k, 177, hi-k, 13, k);
+        graphics.blit(this.background_image_, x0+62, y0+55+hi-k, 177, hi-k, 13, k);
       }
-      blit(mx, x0+79, y0+30, 176, 15, 1+progress_px(17), 15);
+      graphics.blit(this.background_image_, x0+79, y0+30, 176, 15, 1+progress_px(17), 15);
       int we = energy_px(32, 8);
-      if(we>0) blit(mx, x0+90, y0+54, 185, 30, we, 13);
+      if(we>0) graphics.blit(this.background_image_, x0+90, y0+54, 185, 30, we, 13);
       switch(getMenu().field(4)) {
-        case 0 -> blit(mx, x0 + 144, y0 + 57, 180, 57, 6, 9);
-        case 1 -> blit(mx, x0 + 142, y0 + 58, 190, 58, 9, 6);
-        case 2 -> blit(mx, x0 + 144, y0 + 56, 200, 57, 6, 9);
-        case 3 -> blit(mx, x0 + 143, y0 + 58, 210, 58, 9, 6);
+        case 0 -> graphics.blit(this.background_image_, x0 + 144, y0 + 57, 180, 57, 6, 9);
+        case 1 -> graphics.blit(this.background_image_, x0 + 142, y0 + 58, 190, 58, 9, 6);
+        case 2 -> graphics.blit(this.background_image_, x0 + 144, y0 + 56, 200, 57, 6, 9);
+        case 3 -> graphics.blit(this.background_image_, x0 + 143, y0 + 58, 210, 58, 9, 6);
       }
     }
 

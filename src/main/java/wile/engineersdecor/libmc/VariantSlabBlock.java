@@ -92,7 +92,7 @@ public class VariantSlabBlock extends StandardBlocks.WaterLoggable implements St
   { return (adjacentBlockState==state) || (super.skipRendering(state, adjacentBlockState, side)); }
 
   @Override
-  public boolean isPossibleToRespawnInThis()
+  public boolean isPossibleToRespawnInThis(BlockState state)
   { return false; }
 
   @Override

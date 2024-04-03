@@ -40,6 +40,7 @@ public class ModEngineersDecor
     ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.COMMON_CONFIG_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onSetup);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(Registries::addCreative);
     MinecraftForge.EVENT_BUS.register(this);
   }
 
@@ -90,7 +91,7 @@ public class ModEngineersDecor
   {
     @SubscribeEvent
     public static void onRenderGui(net.minecraftforge.client.event.RenderGuiOverlayEvent.Post event)
-    { Overlay.TextOverlayGui.INSTANCE.onRenderGui(event.getPoseStack()); }
+    { Overlay.TextOverlayGui.INSTANCE.onRenderGui(event.getGuiGraphics()); }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)

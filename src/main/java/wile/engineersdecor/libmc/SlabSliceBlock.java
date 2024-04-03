@@ -94,7 +94,7 @@ public class SlabSliceBlock extends StandardBlocks.WaterLoggable implements Stan
   { return (((config & StandardBlocks.CFG_TRANSLUCENT)!=0) ? (RenderTypeHint.TRANSLUCENT) : (RenderTypeHint.CUTOUT)); }
 
   @Override
-  public boolean isPossibleToRespawnInThis()
+  public boolean isPossibleToRespawnInThis(BlockState state)
   { return false; }
 
   @Override

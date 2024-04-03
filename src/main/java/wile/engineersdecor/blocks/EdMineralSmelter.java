@@ -29,7 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -53,15 +53,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import wile.engineersdecor.ModConfig;
 import wile.engineersdecor.ModContent;
-import wile.engineersdecor.libmc.StandardBlocks;
-import wile.engineersdecor.libmc.StandardEntityBlocks;
-import wile.engineersdecor.libmc.Auxiliaries;
-import wile.engineersdecor.libmc.Fluidics;
-import wile.engineersdecor.libmc.Inventories;
-import wile.engineersdecor.libmc.RfEnergy;
+import wile.engineersdecor.libmc.*;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class EdMineralSmelter
 {
@@ -108,7 +106,7 @@ public class EdMineralSmelter
     { return Mth.clamp((state.getValue(PHASE)*5), 0, 15); }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override
@@ -141,7 +139,7 @@ public class EdMineralSmelter
       final ItemStack stack = player.getItemInHand(hand);
       boolean dirty = false;
       if(te.accepts_lava_container(stack)) {
-        if(stack.sameItemStackIgnoreDurability(MineralSmelterTileEntity.BUCKET_STACK)) { // check how this works with item capabilities or so
+        if(stack.is(MineralSmelterTileEntity.BUCKET_STACK.getItem())) { // check how this works with item capabilities or so
           if(te.bucket_extraction_possible()) {
             if(stack.getCount() > 1) {
               int target_stack_index = -1;
@@ -414,8 +412,8 @@ public class EdMineralSmelter
       final int new_phase = phase();
       if(accepts_lava_container(istack)) {
         // That stays in the slot until its extracted or somone takes it out.
-        if(istack.sameItem(BUCKET_STACK)) {
-          if(!main_inventory_.getItem(1).sameItem(LAVA_BUCKET_STACK)) {
+        if(istack.is(BUCKET_STACK.getItem())) {
+          if(!main_inventory_.getItem(1).is(LAVA_BUCKET_STACK.getItem())) {
             if(bucket_extraction_possible()) {
               reset_process();
               main_inventory_.setItem(1, LAVA_BUCKET_STACK);
@@ -463,7 +461,7 @@ public class EdMineralSmelter
             dirty = true;
           }
           case PHASE_HOT -> {
-            if(istack.sameItem(MAGMA_STACK)) {
+            if(istack.is(MAGMA_STACK.getItem())) {
               main_inventory_.setItem(1, new ItemStack(Blocks.OBSIDIAN));
             } else {
               main_inventory_.setItem(1, new ItemStack(Blocks.COBBLESTONE));

@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import wile.engineersdecor.libmc.StandardBlocks;
 import wile.engineersdecor.libmc.Auxiliaries;
+import wile.engineersdecor.libmc.StandardBlocks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,7 +48,7 @@ public class EdGlassBlock extends StainedGlassBlock implements StandardBlocks.IS
   { return (adjacentBlockState.getBlock()==this) || (super.skipRendering(state, adjacentBlockState, side)); }
 
   @Override
-  public boolean isPossibleToRespawnInThis()
+  public boolean isPossibleToRespawnInThis(BlockState state)
   { return false; }
 
 }

@@ -18,7 +18,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -37,9 +37,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import wile.engineersdecor.ModConfig;
 import wile.engineersdecor.ModContent;
+import wile.engineersdecor.libmc.RsSignals;
 import wile.engineersdecor.libmc.StandardBlocks;
 import wile.engineersdecor.libmc.StandardEntityBlocks;
-import wile.engineersdecor.libmc.RsSignals;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -121,7 +121,7 @@ public class EdPipeValve
     { return (side!=null) && (side!=state.getValue(FACING)) && (side!=state.getValue(FACING).getOpposite()); }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override

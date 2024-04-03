@@ -8,11 +8,12 @@
  */
 package wile.engineersdecor.blocks;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +26,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -149,7 +150,7 @@ public class EdHopper
     }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override
@@ -513,7 +514,7 @@ public class EdHopper
         rpos = new Vec3(0.5+worldPosition.getX(),-1.5+worldPosition.getY(),0.5+worldPosition.getZ());
         collection_volume = (new AABB(worldPosition.below(2))).inflate(0.1+collection_range_, 1, 0.1+collection_range_);
       }
-      final List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, collection_volume, e->(e.isAlive() && e.isOnGround()));
+      final List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, collection_volume, e->(e.isAlive() && e.onGround()));
       if(items.size() <= 0) return false;
       final int max_to_collect = 3;
       int n_collected = 0;
@@ -766,9 +767,10 @@ public class EdHopper
     }
 
     @Override
-    protected void renderBgWidgets(PoseStack mx, float partialTicks, int mouseX, int mouseY)
+    protected void renderBgWidgets(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
       final int x0=getGuiLeft(), y0=getGuiTop(), w=getXSize(), h=getYSize();
+      final ResourceLocation bg = this.background_image_;
       HopperContainer container = getMenu();
       // active slot
       {
@@ -776,7 +778,7 @@ public class EdHopper
         if((slot_index < 0) || (slot_index >= HopperTileEntity.NUM_OF_SLOTS)) slot_index = 0;
         int x = (x0+10+((slot_index % 6) * 18));
         int y = (y0+8+((slot_index / 6) * 17));
-        blit(mx, x, y, 200, 8, 18, 18);
+        graphics.blit(bg, x, y, 200, 8, 18, 18);
       }
       // collection range
       {
@@ -784,39 +786,39 @@ public class EdHopper
         int px = lut[Mth.clamp(container.field(0), 0, HopperTileEntity.MAX_COLLECTION_RANGE)];
         int x = x0 + px - 2;
         int y = y0 + 14;
-        blit(mx, x, y, 179, 40, 5, 5);
+        graphics.blit(bg, x, y, 179, 40, 5, 5);
       }
       // transfer period
       {
         int px = (int)Math.round(((33.5 * container.field(3)) / 100) + 1);
         int x = x0 + 132 - 2 + Mth.clamp(px, 0, 34);
         int y = y0 + 27;
-        blit(mx, x, y, 179, 40, 5, 5);
+        graphics.blit(bg, x, y, 179, 40, 5, 5);
       }
       // transfer count
       {
         int x = x0 + 133 - 2 + (container.field(1));
         int y = y0 + 40;
-        blit(mx, x, y, 179, 40, 5, 5);
+        graphics.blit(bg, x, y, 179, 40, 5, 5);
       }
       // redstone input
       {
         if(container.field(5) != 0) {
-          blit(mx, x0+133, y0+49, 217, 49, 9, 9);
+          graphics.blit(bg, x0+133, y0+49, 217, 49, 9, 9);
         }
       }
       // trigger logic
       {
         int inverter_offset_x = ((container.field(2) & HopperTileEntity.LOGIC_INVERTED) != 0) ? 11 : 0;
         int inverter_offset_y = ((container.field(2) & HopperTileEntity.LOGIC_IGNORE_EXT) != 0) ? 10 : 0;
-        blit(mx, x0+145, y0+49, 177+inverter_offset_x, 49+inverter_offset_y, 9, 9);
+        graphics.blit(bg, x0+145, y0+49, 177+inverter_offset_x, 49+inverter_offset_y, 9, 9);
         int pulse_mode_offset  = ((container.field(2) & HopperTileEntity.LOGIC_CONTINUOUS    ) != 0) ? 9 : 0;
-        blit(mx, x0+159, y0+49, 199+pulse_mode_offset, 49, 9, 9);
+        graphics.blit(bg, x0+159, y0+49, 199+pulse_mode_offset, 49, 9, 9);
       }
       // delay timer running indicator
       {
         if((container.field(4) > HopperTileEntity.PERIOD_OFFSET) && ((System.currentTimeMillis() % 1000) < 500)) {
-          blit(mx, x0+148, y0+22, 187, 22, 3, 3);
+          graphics.blit(bg, x0+148, y0+22, 187, 22, 3, 3);
         }
       }
     }

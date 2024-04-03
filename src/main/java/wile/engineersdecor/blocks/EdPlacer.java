@@ -8,11 +8,12 @@
  */
 package wile.engineersdecor.blocks;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,7 +32,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -95,7 +96,7 @@ public class EdPlacer
     { return (world.getBlockEntity(pos) instanceof EdPlacer.PlacerTileEntity te) ? RsSignals.fromContainer(te.inventory_) : 0; }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     { return false; }
 
     @Override
@@ -407,7 +408,7 @@ public class EdPlacer
         final boolean replacable = (current_placement_pos_state.getBlock().canBeReplaced(current_placement_pos_state, Fluids.EMPTY)) && (
           level.isEmptyBlock(placement_pos) ||
           (current_placement_pos_state.getBlock() instanceof IFluidBlock) ||
-          (current_placement_pos_state.getMaterial().isReplaceable() && (!current_placement_pos_state.getMaterial().isSolid()))
+          (current_placement_pos_state.canBeReplaced() && (!current_placement_pos_state.isSolid()))
         );
         if((!replacable) || (
           (!level.getEntitiesOfClass(Entity.class, new AABB(placement_pos), (Entity e)->{
@@ -722,31 +723,32 @@ public class EdPlacer
     }
 
     @Override
-    protected void renderBgWidgets(PoseStack mx, float partialTicks, int mouseX, int mouseY)
+    protected void renderBgWidgets(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
       final int x0=getGuiLeft(), y0=getGuiTop(), w=getXSize(), h=getYSize();
       PlacerContainer container = getMenu();
+      ResourceLocation bg = this.background_image_;
       // active slot
       {
         int slot_index = container.field(2);
         if((slot_index < 0) || (slot_index >= PlacerTileEntity.NUM_OF_SLOTS)) slot_index = 0;
         int x = (x0+10+((slot_index % 6) * 18));
         int y = (y0+8+((slot_index / 6) * 17));
-        blit(mx, x, y, 200, 8, 18, 18);
+        graphics.blit(bg, x, y, 200, 8, 18, 18);
       }
       // redstone input
       {
         if(container.field(1) != 0) {
-          blit(mx, x0+133, y0+49, 217, 49, 9, 9);
+          graphics.blit(bg, x0+133, y0+49, 217, 49, 9, 9);
         }
       }
       // trigger logic
       {
         int inverter_offset_x = ((container.field(0) & PlacerTileEntity.LOGIC_INVERTED) != 0) ? 11 : 0;
         int inverter_offset_y = ((container.field(0) & PlacerTileEntity.LOGIC_IGNORE_EXT) != 0) ? 10 : 0;
-        blit(mx, x0+145, y0+49, 177+inverter_offset_x, 49+inverter_offset_y, 9, 9);
+        graphics.blit(bg, x0+145, y0+49, 177+inverter_offset_x, 49+inverter_offset_y, 9, 9);
         int pulse_mode_offset  = ((container.field(0) & PlacerTileEntity.LOGIC_CONTINUOUS    ) != 0) ? 9 : 0;
-        blit(mx, x0+159, y0+49, 199+pulse_mode_offset, 49, 9, 9);
+        graphics.blit(bg, x0+159, y0+49, 199+pulse_mode_offset, 49, 9, 9);
       }
     }
   }

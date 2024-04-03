@@ -13,7 +13,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -35,8 +34,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.slf4j.Logger;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
@@ -278,19 +277,19 @@ public class Auxiliaries
 
   @SuppressWarnings("deprecation")
   public static ResourceLocation getResourceLocation(Item item)
-  { return Registry.ITEM.getKey(item); }
+  {return ForgeRegistries.ITEMS.getKey(item);}
 
   @SuppressWarnings("deprecation")
   public static ResourceLocation getResourceLocation(Block block)
-  { return Registry.BLOCK.getKey(block); }
+  { return ForgeRegistries.BLOCKS.getKey(block); }
 
   @SuppressWarnings("deprecation")
   public static ResourceLocation getResourceLocation(net.minecraft.world.inventory.MenuType<?> menu)
-  { return Registry.MENU.getKey(menu); }
+  { return ForgeRegistries.MENU_TYPES.getKey(menu); }
 
   @SuppressWarnings("deprecation")
   public static ResourceLocation getResourceLocation(net.minecraft.world.level.material.Fluid fluid)
-  { return Registry.FLUID.getKey(fluid); }
+  { return ForgeRegistries.FLUIDS.getKey(fluid); }
 
   // -------------------------------------------------------------------------------------------------------------------
   // Item NBT data

@@ -8,9 +8,11 @@
  */
 package wile.engineersdecor.libmc;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -20,9 +22,12 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import wile.engineersdecor.ModEngineersDecor;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -53,6 +58,7 @@ public class Registries
   private static DeferredRegister<EntityType<?>> ENTITIES;
   private static DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS;
   private static List<DeferredRegister<?>> MOD_REGISTRIES;
+  private static final DeferredRegister<CreativeModeTab> CREATIVE_TAB = DeferredRegister.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, ModEngineersDecor.MODID);
 
   public static void init(String mod_id, String creative_tab_icon_item_name, Consumer<DeferredRegister<?>> registrar)
   {
@@ -64,18 +70,32 @@ public class Registries
     MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, modid);
     ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, modid);
     RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, modid);
+//    CREATIVE_TAB = DeferredRegister.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, modid);
+    CREATIVE_TAB.register(FMLJavaModLoadingContext.get().getModEventBus());
     List.of(BLOCKS, ITEMS, BLOCK_ENTITIES, MENUS, ENTITIES, RECIPE_SERIALIZERS).forEach(registrar);
   }
 
+  public static final RegistryObject<CreativeModeTab> ENGINEERS_DECOR_TAB = CREATIVE_TAB.register(ModEngineersDecor.MODID,
+          () -> CreativeModeTab.builder()
+                  .icon(() -> new ItemStack(registered_items.get(creative_tab_icon).get()))
+                  .title(Component.literal(ModEngineersDecor.MODNAME))
+                  .build());
+
+  public static void addCreative(BuildCreativeModeTabContentsEvent event)
+  {
+    if(event.getTab() == Registries.ENGINEERS_DECOR_TAB.get())
+    {
+      List<Block> blocks = Registries.getRegisteredBlocks();
+      List<Item> items = Registries.getRegisteredItems();
+
+      blocks.forEach(event::accept);
+      items.forEach(event::accept);
+    }
+  }
 
   public static CreativeModeTab getCreativeModeTab()
   {
-    if(creative_tab==null) {
-      creative_tab = (new CreativeModeTab("tab" + modid) {
-        public ItemStack makeIcon() { return new ItemStack(getItem(creative_tab_icon)); }
-      });
-    }
-    return creative_tab;
+    return ENGINEERS_DECOR_TAB.get();
   }
 
   // -------------------------------------------------------------------------------------------------------------
@@ -142,7 +162,7 @@ public class Registries
   public static <T extends Block> void addBlock(String registry_name, Supplier<T> block_supplier)
   {
     registered_blocks.put(registry_name, BLOCKS.register(registry_name, block_supplier));
-    registered_items.put(registry_name, ITEMS.register(registry_name, ()->new BlockItem(registered_blocks.get(registry_name).get(), (new Item.Properties()).tab(getCreativeModeTab()))));
+    registered_items.put(registry_name, ITEMS.register(registry_name, ()->new BlockItem(registered_blocks.get(registry_name).get(), (new Item.Properties()))));
   }
 
   public static <TB extends Block, TI extends Item> void addBlock(String registry_name, Supplier<TB> block_supplier, Supplier<TI> item_supplier)
@@ -167,7 +187,7 @@ public class Registries
   { registered_entity_types.put(registry_name, ENTITIES.register(registry_name, supplier)); }
 
   public static <T extends MenuType<?>> void addMenuType(String registry_name, MenuType.MenuSupplier<?> supplier)
-  { registered_menu_types.put(registry_name, MENUS.register(registry_name, ()->new MenuType<>(supplier))); }
+  { registered_menu_types.put(registry_name, MENUS.register(registry_name, ()->new MenuType<>(supplier, FeatureFlags.DEFAULT_FLAGS))); }
 
   public static void addRecipeSerializer(String registry_name, Supplier<? extends RecipeSerializer<?>> serializer_supplier)
   { recipe_serializers.put(registry_name, RECIPE_SERIALIZERS.register(registry_name, serializer_supplier)); }
@@ -192,7 +212,7 @@ public class Registries
 
   public static <TB extends Block, TI extends Item> void addBlock(String registry_name, Supplier<TB> block_supplier, BiFunction<Block, Item.Properties, Item> item_builder)
   {
-    addBlock(registry_name, block_supplier, ()->item_builder.apply(registered_blocks.get(registry_name).get(), (new Item.Properties()).tab(getCreativeModeTab())));
+    addBlock(registry_name, block_supplier, ()->item_builder.apply(registered_blocks.get(registry_name).get(), (new Item.Properties())));
   }
 
   public static void addBlock(String registry_name, Supplier<? extends Block> block_supplier, BlockEntityType.BlockEntitySupplier<?> block_entity_ctor)

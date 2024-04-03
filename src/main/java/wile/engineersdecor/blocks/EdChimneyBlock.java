@@ -11,13 +11,14 @@ package wile.engineersdecor.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,6 +29,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import wile.engineersdecor.libmc.Overlay;
 import wile.engineersdecor.libmc.StandardBlocks;
 
 import javax.annotation.Nullable;
@@ -62,7 +64,11 @@ public class EdChimneyBlock extends StandardBlocks.Cutout
   @Override
   @SuppressWarnings("deprecation")
   public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTraceResult)
-  { world.setBlock(pos, state.setValue(POWER, (state.getValue(POWER)+1) & 0xf), 1|2); return InteractionResult.sidedSuccess(world.isClientSide()); }
+  {
+    world.setBlock(pos, state.setValue(POWER, (state.getValue(POWER)+1) & 0xf), 1|2);
+    Overlay.show(player, Component.literal(state.getValue(POWER).toString()));
+    return InteractionResult.sidedSuccess(world.isClientSide());
+  }
 
   @Override
   @SuppressWarnings("deprecation")
@@ -73,7 +79,7 @@ public class EdChimneyBlock extends StandardBlocks.Cutout
   }
 
   @Override
-  public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+  public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
   { return false; }
 
   @Override

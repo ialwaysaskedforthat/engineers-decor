@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,8 +36,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import wile.engineersdecor.libmc.StandardBlocks;
 import wile.engineersdecor.libmc.Auxiliaries;
+import wile.engineersdecor.libmc.StandardBlocks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -150,7 +151,7 @@ public class EdHatchBlock extends StandardBlocks.HorizontalWaterLoggable
   }
 
   @Override
-  public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side)
+  public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
   { return false; }
 
   @Override

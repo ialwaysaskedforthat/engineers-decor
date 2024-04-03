@@ -43,12 +43,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import wile.engineersdecor.ModConfig;
 import wile.engineersdecor.ModContent;
-import wile.engineersdecor.libmc.StandardBlocks;
-import wile.engineersdecor.libmc.StandardEntityBlocks;
-import wile.engineersdecor.libmc.Auxiliaries;
-import wile.engineersdecor.libmc.Inventories;
-import wile.engineersdecor.libmc.Overlay;
-import wile.engineersdecor.libmc.RfEnergy;
+import wile.engineersdecor.libmc.*;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -255,7 +250,7 @@ public class EdBreaker
       final Block block = state.getBlock();
       if(blacklist.contains(block)) return false;
       if(state.isAir()) return false;
-      if(state.getMaterial().isLiquid()) return false;
+      if(state.liquid()) return false;
       float bh = state.getDestroySpeed(world, pos);
       return !((bh<0) || (bh>55));
     }

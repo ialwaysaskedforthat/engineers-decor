@@ -11,6 +11,7 @@ package wile.engineersdecor.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -29,8 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PlayMessages;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PlayMessages;
 import wile.engineersdecor.ModConfig;
 import wile.engineersdecor.ModContent;
 import wile.engineersdecor.libmc.StandardBlocks;
@@ -118,7 +119,7 @@ public class EdChair
     public static EntityChair customClientFactory(PlayMessages.SpawnEntity spkt, Level world)
     { return new EntityChair(world); }
 
-    public Packet<?> getAddEntityPacket()
+    public Packet<ClientGamePacketListener> getAddEntityPacket()
     { return NetworkHooks.getEntitySpawningPacket(this); }
 
     public static boolean accepts_mob(LivingEntity entity)
@@ -178,7 +179,7 @@ public class EdChair
     @Override
     public void tick()
     {
-      if(level.isClientSide) return;
+      if(level().isClientSide) return;
       super.tick();
       if(--t_sit > 0) return;
       Entity sitter = getPassengers().isEmpty() ? null : getPassengers().get(0);
@@ -187,9 +188,9 @@ public class EdChair
         return;
       }
       boolean abort = (!sitting_enabled);
-      final BlockState state = level.getBlockState(chair_pos);
+      final BlockState state = level().getBlockState(chair_pos);
       if((state==null) || (!(state.getBlock() instanceof ChairBlock))) abort = true;
-      if(!level.isEmptyBlock(chair_pos.above())) abort = true;
+      if(!level().isEmptyBlock(chair_pos.above())) abort = true;
       if((!(sitter instanceof Player)) && (Math.random() < standup_probability)) abort = true;
       if(abort) {
         for(Entity e:getPassengers()) {

@@ -39,7 +39,7 @@ public class StandardStairsBlock extends StairBlock implements StandardBlocks.IS
   { Auxiliaries.Tooltip.addInformation(stack, world, tooltip, flag, true); }
 
   @Override
-  public boolean isPossibleToRespawnInThis()
+  public boolean isPossibleToRespawnInThis(BlockState state)
   { return false; }
 
   @Override

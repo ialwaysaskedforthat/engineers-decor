@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -47,10 +47,10 @@ import java.util.stream.Stream;
 public class Inventories
 {
   public static boolean areItemStacksIdentical(ItemStack a, ItemStack b)
-  { return (a.getItem()==b.getItem()) && ItemStack.tagMatches(a, b); }
+  { return (a.getItem()==b.getItem()) && ItemStack.matches(a, b); }
 
   public static boolean areItemStacksDifferent(ItemStack a, ItemStack b)
-  { return (a.getItem()!=b.getItem()) || (!ItemStack.tagMatches(a, b)); }
+  { return (a.getItem()!=b.getItem()) || (!ItemStack.matches(a, b)); }
 
   public static IItemHandler itemhandler(Level world, BlockPos pos, @Nullable Direction side)
   {

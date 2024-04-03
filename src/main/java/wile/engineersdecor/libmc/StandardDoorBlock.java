@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
@@ -52,7 +53,7 @@ public class StandardDoorBlock extends DoorBlock implements StandardBlocks.IStan
 
   public StandardDoorBlock(long config, BlockBehaviour.Properties properties, AABB[] open_aabbs_top, AABB[] open_aabbs_bottom, AABB[] closed_aabbs_top, AABB[] closed_aabbs_bottom, SoundEvent open_sound, SoundEvent close_sound)
   {
-    super(properties);
+    super(properties, BlockSetType.IRON);
     VoxelShape[][][][] shapes = new VoxelShape[Direction.values().length][2][2][2];
     for(Direction facing: Direction.values()) {
       for(boolean open: new boolean[]{false,true}) {
@@ -129,7 +130,7 @@ public class StandardDoorBlock extends DoorBlock implements StandardBlocks.IStan
   { Auxiliaries.Tooltip.addInformation(stack, world, tooltip, flag, true); }
 
   @Override
-  public boolean isPossibleToRespawnInThis()
+  public boolean isPossibleToRespawnInThis(BlockState state)
   { return false; }
 
   @Override

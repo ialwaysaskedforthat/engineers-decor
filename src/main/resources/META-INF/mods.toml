@@ -1,13 +1,13 @@
 # @file mods.toml
 # @spec TOML v0.5.0 (https://github.com/toml-lang/toml)
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[47,)"
 issueTrackerURL="https://github.com/stfwi/engineers-decor/issues/"
 license="MIT"
 
 [[mods]]
 modId="engineersdecor"
-version="${file.jarVersion}"
+version="1.3.30"
 displayName="Engineer's Decor"
 description="Adds cosmetic blocks for the engineer's workshop, factory and home."
 authors="wilechaote"
@@ -19,13 +19,13 @@ logoFile="logo.png"
 [[dependencies.engineersdecor]]
   modId="forge"
   mandatory=true
-  versionRange="[43.0.16,)"
+  versionRange="[47,)"
   ordering="NONE"
   side="BOTH"
 
 [[dependencies.engineersdecor]]
   modId="minecraft"
   mandatory=true
-  versionRange="[1.19.2]"
+  versionRange="[1.20.1]"
   ordering="NONE"
   side="BOTH"
